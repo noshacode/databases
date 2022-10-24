@@ -31,7 +31,7 @@ function authorsTable() {
 
 function addColumn() {
 	let sql =
-		"ALTER TABLE authors ADD COLUMN mentor INT AFTER gender, ADD CONSTRAINT FK_MENTOR FOREIGN KEY (mentor) REFERENCES authors(author_id) ";
+		"ALTER TABLE authors ADD COLUMN mentor INT AFTER gender, ADD FOREIGN KEY (mentor) REFERENCES authors(author_id) ";
 	db.query(sql, (err, result) => {
 		if (err) {
 			//
@@ -41,6 +41,6 @@ function addColumn() {
 	});
 }
 
-// authorsTable()
+authorsTable()
 
 addColumn();
