@@ -105,9 +105,13 @@ async function updateEpisodeExercises(client) {
 	// Unfortunately we made a mistake in the arrays and the element type called 'BUSHES' should actually be 'BUSH' as sometimes only one bush was painted.
 	// Update all of the documents in the collection that have `BUSHES` in the elements array to now have `BUSH`
 	// It should update 120 episodes!
-
+	const BUSH  = await bobRossCollection.updateMany(
+      { elements: { $all: ["BUSHES"] } },
+      { $set: { elements: { $all: ["BUSH"] } } }
+    );
+	
 	console.log(
-		`Ran a command to update all the BUSHES to BUSH and it updated ${"TODO: fill in variable here"} episodes`
+		`Ran a command to update all the BUSHES to BUSH and it updated ${BUSH.modifiedCount} episodes`
 	);
 }
 
@@ -117,8 +121,14 @@ async function deleteEpisodeExercise(client) {
 	 * This is episode 14 in season 31. Please remove it and verify that it has been removed!
 	 */
 
+	 const bobRossCollection = await client
+	 .db("databaseWeek3")
+	 .collection("bob_ross_episodes");
+
+	 const deleteEpisode = await  bobRossCollection.deleteOne({ episode:"S31E14"})
+
 	console.log(
-		`Ran a command to delete episode and it deleted ${"TODO: fill in variable here"} episodes`
+		`Ran a command to delete episode and it deleted ${deleteEpisode.deletedCount} episodes`
 	);
 }
 
