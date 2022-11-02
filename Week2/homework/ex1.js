@@ -19,7 +19,7 @@ db.connect((err) => {
 // create table
 function authorsTable() {
 	let sql =
-		"CREATE TABLE authors(author_id INT NOT NULL AUTO_INCREMENT,author_name varchar(255), university varchar(255), date_of_birth DATE, h_index INT, gender varchar(255),Primary Key (author_id))";
+		"CREATE TABLE authors(author_id INT NOT NULL AUTO_INCREMENT,author_name varchar(100), university varchar(40), date_of_birth DATE, h_index INT, gender varchar(10),Primary Key (author_id))";
 	db.query(sql, (err, result) => {
 		if (err) {
 			//
