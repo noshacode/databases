@@ -25,14 +25,17 @@ function selectQuery(sql){
 	});
 }
 
-//Sum of the research papers published by all female authors. 
-selectQuery("select count(*) from (SELECT research_Papers.paper_id from research_Papers left join authors ON authors.author_id = research_Papers.author_id where authors.gender= 'female') as female_authors")
+//All research papers and the number of authors that wrote that paper.
+selectQuery("SELECT research_Papers.paper_title, count(research_Papers_Authors.author_id) AS authors FROM research_Papers INNER JOIN research_Papers_Authors ON research_Papers.paper_id = research_Papers_Authors.paper_id GROUP BY research_papers.paper_title")
 
-// Average of the h-index of all authors per university.
+//Sum of the research papers published by all female authors. 
+selectQuery("select count(*) from (SELECT research_Papers.paper_id from research_Papers join research_Papers_Authors ON research_Papers_Authors.paper_id = research_Papers.paper_id  join authors ON authors.author_id = research_Papers_Authors.author_id where authors.gender= 'female') as female_authors")
+
+// // Average of the h-index of all authors per university.
 selectQuery("SELECT authors.university, AVG(authors.h_index) FROM authors GROUP by authors.university");
-// Sum of the research papers of the authors per university.
-selectQuery("SELECT authors.university, COUNT(research_Papers.author_id) AS count FROM meetup.authors left join meetup.research_Papers on authors.author_id = research_Papers.author_id GROUP by authors.university");
-// Minimum and maximum of the h-index of all authors per university.
+// // Sum of the research papers of the authors per university.
+selectQuery("SELECT authors.university, COUNT(research_Papers_Authors.author_id) AS count FROM authors left join research_Papers_Authors on authors.author_id = research_Papers_Authors.author_id GROUP by authors.university");
+// // Minimum and maximum of the h-index of all authors per university.
 selectQuery("SELECT authors.university, MIN(authors.h_index) ,MAX(authors.h_index) FROM authors GROUP by authors.university");
 
 

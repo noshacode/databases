@@ -1,5 +1,5 @@
 import mysql from "mysql";
-import faker from 'faker';
+import faker from "faker";
 
 // create connection
 const db = mysql.createConnection({
@@ -20,8 +20,8 @@ db.connect((err) => {
 // create table
 function research_Papers() {
 	let sql =
-		"CREATE TABLE research_Papers(paper_id INT NOT NULL AUTO_INCREMENT ,paper_title varchar(255), publish_date DATE,Primary Key(paper_id))";
-        
+		"CREATE TABLE IF NOT EXISTS research_Papers(paper_id INT NOT NULL AUTO_INCREMENT ,paper_title varchar(255), publish_date DATE,Primary Key(paper_id))";
+
 	db.query(sql, (err, result) => {
 		if (err) {
 			//
@@ -29,12 +29,15 @@ function research_Papers() {
 		}
 		console.log("table created...", result);
 	});
-
 }
-function authorId() {
-	let sql =
-		"ALTER TABLE research_Papers ADD COLUMN author_id INT AFTER publish_date, ADD CONSTRAINT FK_author_id FOREIGN KEY (author_id) REFERENCES authors(author_id) ";
-	db.query(sql,(err, result) => {
+
+function reserach_author_table() {
+	let sql = `CREATE TABLE IF NOT EXISTS research_Papers_Authors(id int not NULL PRIMARY KEY AUTO_INCREMENT,
+			author_id int not null,
+			paper_id int not null,
+			FOREIGN KEY (author_id) REFERENCES authors (author_id),
+			FOREIGN KEY (paper_id) REFERENCES research_Papers (paper_id))`;
+	db.query(sql, (err, result) => {
 		if (err) {
 			//
 			throw err;
@@ -42,14 +45,13 @@ function authorId() {
 		console.log("table created...", result);
 	});
 }
-// research_Papers()
-// authorId()
+research_Papers();
+reserach_author_table();
 
 //insert rows 15 authors
-function insertAuthors(tableName,item){
-    
-    let sql = `INSERT INTO ${tableName} SET ?`;
-    db.query(sql,item,(err, result) => {
+function insertAuthors(tableName, item) {
+	let sql = `INSERT INTO ${tableName} SET ?`;
+	db.query(sql, item, (err, result) => {
 		if (err) {
 			//
 			throw err;
@@ -74,22 +76,33 @@ insertAuthors("authors",{author_name:"Saud Hamada",university :"Princeton",date_
 insertAuthors("authors",{author_name:"Raja'a Alem",university :"Cornell",date_of_birth :"1957-06-03", h_index :"8", gender:"female",mentor:9});
 
 //
-function insertResearch(tableName,item){
-    
-    let sql = `INSERT INTO ${tableName} SET ?`;
-    db.query(sql,item,(err, result) => {
+function insertResearch(tableName, item) {
+	let sql = `INSERT INTO ${tableName} SET ?`;
+	db.query(sql, item, (err, result) => {
 		if (err) {
 			//
 			throw err;
 		}
 		console.log("item created...", result);
 	});
-};
+}
 
-for(let i=0; i < 30; i++){
-    insertResearch('research_Papers', {paper_title: faker.random.words(4), publish_date:faker.date.past(),author_id: randomInteger(1,15)})
+for (let i = 0; i < 30; i++) {
+	insertResearch("research_Papers", {
+		paper_title: faker.random.words(4),
+		publish_date: faker.date.past(),
+		// author_id: randomInteger(1, 15),
+	});
+}
+
+for (let i = 0; i < 30; i++) {
+	insertResearch("research_Papers_Authors", {
+		author_id: randomInteger(1, 15),
+		paper_id: randomInteger(1, 30),
+	});
 }
 
 function randomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
